@@ -4,6 +4,7 @@ import requests
 import io
 from dashboard import mostrar_dashboard
 from vista_completa import mostrar_vista_completa
+from generador import mostrar_generador_fichas  # Importa la nueva función
 
 def descargar_archivo(file_id):
     url = f"https://docs.google.com/spreadsheets/d/{file_id}/export?format=xlsx"
@@ -21,7 +22,7 @@ def cargar_datos(file_id):
 def main():
     st.set_page_config(page_title="Dashboard de Datos", layout="wide")
     
-    st.title("📊  INVENTARIO TECNOLOGIA 🚌")
+    st.title("📊 INVENTARIO TECNOLOGÍA 🚌")
     
     if "pagina" not in st.session_state:
         st.session_state.pagina = "Dashboard"
@@ -33,6 +34,8 @@ def main():
             st.session_state.pagina = "Dashboard"
         if st.button('📄 Vista Completa', use_container_width=True):
             st.session_state.pagina = "Vista Completa"
+        if st.button('📝 Generador de Fichas', use_container_width=True):
+            st.session_state.pagina = "Generador de Fichas"
         if st.button('🔄 Actualizar Datos', use_container_width=True):
             st.session_state.datos_actualizados = False
     
@@ -53,6 +56,8 @@ def main():
                 mostrar_dashboard(df, columna_fecha)
             elif st.session_state.pagina == "Vista Completa":
                 mostrar_vista_completa(df, columna_fecha)
+            elif st.session_state.pagina == "Generador de Fichas":
+                mostrar_generador_fichas()  # Llama al generador de fichas
         else:
             st.error("No se pudieron cargar los datos desde Google Drive.")
     except Exception as e:
