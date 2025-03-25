@@ -2,8 +2,11 @@ import streamlit as st
 import pandas as pd
 import datetime
 
-# Función para mostrar la vista completa
+# Función para mostrar la vista completa con mejor diseño
 def mostrar_vista_completa(df, columna_fecha):
+    st.markdown("## 🔍 Vista Completa de Datos")
+    st.divider()
+    
     # Obtener las fechas únicas en las que se realizó el inventario
     fechas_inventario = df[columna_fecha].dt.date.unique()
     
@@ -11,29 +14,30 @@ def mostrar_vista_completa(df, columna_fecha):
     col1, col2 = st.columns([3, 1])  # col1 más grande para el título, col2 para el calendario
     
     with col1:
-        st.write("### Vista Completa de los datos")
+        st.markdown("### 📋 Datos de Inventario")
     
     with col2:
-        st.write("### 📅 Días con inventario")
-        for fecha in sorted(fechas_inventario):
-            st.markdown(f"- {fecha.strftime('%Y-%m-%d')}")
+        st.markdown("### 📅 Días con Inventario")
+        st.markdown("\n".join(f"- **{fecha.strftime('%Y-%m-%d')}**" for fecha in sorted(fechas_inventario)))
     
     # Obtener la primera fecha disponible
     primera_fecha = df[columna_fecha].min().date()
     
-    # Buscador
-    st.write("#### Buscador")
+    st.divider()
+    
+    # Buscador con mejor organización
+    st.markdown("## 🔎 Búsqueda de Registros")
     col10, col11, col12 = st.columns(3)
     
     with col10:
-        buscar_placa = st.text_input("Buscar por placa de vehículo")
+        buscar_placa = st.text_input("🚗 Buscar por placa de vehículo")
     with col11:
-        buscar_vehiculo = st.text_input("Buscar por número interno de vehículo")
+        buscar_vehiculo = st.text_input("🚍 Buscar por número interno de vehículo")
     with col12:
-        buscar_fecha = st.date_input("Buscar por fecha", value=primera_fecha)
+        buscar_fecha = st.date_input("📆 Buscar por fecha", value=primera_fecha)
     
     # Filtrar el DataFrame según los criterios de búsqueda
-    df_filtrado = df.copy()  # Copiar el DataFrame original para no modificarlo
+    df_filtrado = df.copy()
     
     if buscar_placa:
         df_filtrado = df_filtrado[df_filtrado["Placa de vehículo."].astype(str).str.contains(buscar_placa, case=False, na=False)]
@@ -42,12 +46,13 @@ def mostrar_vista_completa(df, columna_fecha):
     if buscar_fecha:
         df_filtrado = df_filtrado[df_filtrado[columna_fecha].dt.date == buscar_fecha]
     else:
-        # Mostrar todos los datos desde la primera fecha por defecto
         df_filtrado = df_filtrado[df_filtrado[columna_fecha].dt.date >= primera_fecha]
     
-    # Mostrar el DataFrame filtrado
-    st.write(f"**Resultados encontrados:** {len(df_filtrado)} registros")
-    st.dataframe(df_filtrado, height=600)
+    st.divider()
+    
+    # Mostrar el DataFrame filtrado con información
+    st.markdown(f"### 📊 Resultados Encontrados: {len(df_filtrado)} registros")
+    st.dataframe(df_filtrado, height=600, use_container_width=True)
 
 # Ejemplo de uso
 if __name__ == "__main__":
